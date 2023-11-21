@@ -13,6 +13,8 @@ import com.songify.song.infrastructure.controller.dto.response.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,13 +33,8 @@ public class SongRestController {
 
 
     @GetMapping
-    public ResponseEntity<GetAllSongsResponseDto> getAllSongs(@RequestParam(required = false) Integer limit) {
-        List<Song> allSongs = songRetriever.findAll();
-        if (limit != null) {
-            List<Song> limitedMap = songRetriever.findAllLimitedBy(limit);
-            GetAllSongsResponseDto response = new GetAllSongsResponseDto(limitedMap);
-            return ResponseEntity.ok(response);
-        }
+    public ResponseEntity<GetAllSongsResponseDto> getAllSongs(@PageableDefault(page = 0, size = 10) Pageable pageable) {
+        List<Song> allSongs = songRetriever.findAll(pageable);
         GetAllSongsResponseDto response = SongMapper.mapFromSongToGetAllSongsResponseDto(allSongs);
         return ResponseEntity.ok(response);
     }
@@ -53,8 +50,8 @@ public class SongRestController {
     @PostMapping
     public ResponseEntity<CreateSongResponseDto> postSong(@RequestBody @Valid CreateSongRequestDto request) {
         Song song = SongMapper.mapFromCreateSongRequestDtoToSong(request);
-        songAdder.addSong(song);
-        CreateSongResponseDto body = SongMapper.mapFromSongToCreateSongResponseDto(song);
+        Song savedSong = songAdder.addSong(song);
+        CreateSongResponseDto body = SongMapper.mapFromSongToCreateSongResponseDto(savedSong);
         return ResponseEntity.ok(body);
     }
 

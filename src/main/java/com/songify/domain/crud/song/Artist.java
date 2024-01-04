@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @NoArgsConstructor
 @Getter(AccessLevel.PACKAGE)
@@ -24,5 +27,8 @@ class Artist extends BaseEntity {
 
     @Column(nullable = false)
     private String name;
+
+    @ManyToMany
+    private Set<Album> albums = new HashSet<>();
 
 }

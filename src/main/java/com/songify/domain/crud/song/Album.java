@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -27,4 +29,8 @@ class Album extends BaseEntity {
     private String title;
 
     private Instant releaseDate;
+
+    @OneToMany
+    @JoinColumn(name = "album_id")
+    private Set<Song> songs = new HashSet<>();
 }
